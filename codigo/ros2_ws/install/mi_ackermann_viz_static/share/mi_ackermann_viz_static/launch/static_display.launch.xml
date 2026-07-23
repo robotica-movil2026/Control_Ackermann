@@ -1,0 +1,18 @@
+<launch>
+  <let name="urdf_path"
+       value="$(find-pkg-share mi_ackermann_viz_static)/urdf/static_robot.urdf.xacro" />
+  <let name="rviz_config"
+       value="$(find-pkg-share mi_ackermann_viz_static)/rviz/static_display.rviz" />
+
+  <node pkg="tf2_ros" exec="static_transform_publisher"
+        args="0 0 0 0 0 0 1 map base_link"/>
+
+  <node pkg="robot_state_publisher" exec="robot_state_publisher">
+    <param name="robot_description"
+           value="$(command 'xacro $(var urdf_path)')" />
+    <param name="publish_frequency" value="30.0"/>
+  </node>
+
+  <node pkg="rviz2" exec="rviz2" output="screen"
+        args="-d $(var rviz_config)" />
+</launch>

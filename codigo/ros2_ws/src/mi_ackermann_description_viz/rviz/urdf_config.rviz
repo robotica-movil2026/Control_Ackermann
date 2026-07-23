@@ -1,0 +1,34 @@
+Panels:
+  - Class: rviz_common/Displays
+  - Class: rviz_common/Views
+    Name: Views
+  - Class: rviz_common/Time
+    Name: Time
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Alpha: 0.5
+      Class: rviz_default_plugins/RobotModel
+      Name: RobotModel
+      Robot Description: robot_description
+      Visual Enabled: true
+      Planning Scale: 0.0
+      Visible: true
+    - Class: rviz_default_plugins/TF
+      Name: TF
+      Enabled: true
+      Frame Timeout: 15
+      Frames:
+        All Enabled: false
+      Tree Height: 1
+      Visible: true
+    - Class: rviz_default_plugins/Grid
+      Name: Grid
+      Enabled: true
+      Visible: true
+  Global Options:
+    Fixed Frame: base_link
+    Frame Rate: 30
+  Window Geometry:
+    Height: 900
+    Width: 1200

@@ -1,0 +1,20 @@
+<launch>
+    <let name="urdf_path" 
+         value="$(find-pkg-share mi_ackermann_description_viz)/urdf/my_robot.urdf.xacro" />
+    <let name="rviz_config_path"
+         value="$(find-pkg-share mi_ackermann_description_viz)/rviz/urdf_config.rviz" />
+
+    <node pkg="robot_state_publisher" exec="robot_state_publisher">
+        <param name="robot_description"
+               value="$(command 'xacro $(var urdf_path)')" />
+        <param name="publish_frequency" value="30.0" />
+        <param name="ignore_timestamp" value="true" />
+    </node>
+
+    <node pkg="joint_state_publisher_gui" exec="joint_state_publisher_gui">
+        <param name="use_gui" value="true" />
+    </node>
+
+    <node pkg="rviz2" exec="rviz2" output="screen" 
+          args="-d $(var rviz_config_path)" />
+</launch>

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="my_robot">
+
+  <xacro:include filename="common_propperties.xacro"/>
+  <xacro:include filename="mobile_base.xacro"/>
+  <xacro:include filename="mobile_base.ros2_control.xacro"/>
+
+  <!-- instancia el robot -->
+  <xacro:carlikebot prefix=""/>
+
+  <!-- instancia el bloque ros2_control -->
+  <xacro:carlikebot_ros2_control prefix=""/>
+
+</robot>

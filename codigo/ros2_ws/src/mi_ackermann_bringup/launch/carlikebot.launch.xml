@@ -1,0 +1,28 @@
+<launch>
+  <let name="robot_description"
+       value="$(command 'xacro $(find-pkg-share mi_ackermann_description)/urdf/my_robot.urdf.xacro')"/>
+
+  <node pkg="controller_manager" exec="ros2_control_node" output="screen">
+    <param name="robot_description" value="$(var robot_description)"/>
+    <param from="$(find-pkg-share mi_ackermann_bringup)/config/carlikebot_controllers.yaml"/>
+  </node>
+
+  <node pkg="robot_state_publisher" exec="robot_state_publisher" output="screen">
+    <param name="robot_description" value="$(var robot_description)"/>
+  </node>
+
+  <node pkg="controller_manager" exec="spawner"
+        args="joint_state_broadcaster
+              bicycle_steering_controller
+              --controller-ros-args
+              '--ros-args -r /bicycle_steering_controller/tf_odometry:=/tf'"/>
+
+  <!-- manda velocidad cero inmediatamente para inicializar la odometría -->
+  <timer period="3.0">
+    <executable cmd="ros2 topic pub --times 10 --rate 10
+      /bicycle_steering_controller/reference
+      geometry_msgs/msg/TwistStamped
+      '{header: {stamp: {sec: 1}, frame_id: base_link}, twist: {linear: {x: 0.001}, angular: {z: 0.0}}}'"/>
+  </timer>
+
+</launch>

@@ -1,0 +1,9 @@
+source;share/mi_primer_paquete/hook/pythonpath.ps1
+source;share/mi_primer_paquete/hook/pythonpath.dsv
+source;share/mi_primer_paquete/hook/pythonpath.sh
+source;share/mi_primer_paquete/hook/ament_prefix_path.ps1
+source;share/mi_primer_paquete/hook/ament_prefix_path.dsv
+source;share/mi_primer_paquete/hook/ament_prefix_path.sh
+source;../../build/mi_primer_paquete/share/mi_primer_paquete/hook/pythonpath_develop.ps1
+source;../../build/mi_primer_paquete/share/mi_primer_paquete/hook/pythonpath_develop.dsv
+source;../../build/mi_primer_paquete/share/mi_primer_paquete/hook/pythonpath_develop.sh

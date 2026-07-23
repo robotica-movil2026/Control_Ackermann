@@ -1,0 +1,10 @@
+<library path="mi_ackermann_hardware">
+  <class
+    name="mi_ackermann_hardware/AckermannHardware"
+    type="mi_ackermann_hardware::AckermannHardware"
+    base_class_type="hardware_interface::SystemInterface">
+    <description>
+      Hardware interface para vehículo Ackermann con EV3 via TCP
+    </description>
+  </class>
+</library>

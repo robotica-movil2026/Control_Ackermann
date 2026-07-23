@@ -1,0 +1,8 @@
+source;share/mi_ackermann_viz_static/hook/cmake_prefix_path.ps1
+source;share/mi_ackermann_viz_static/hook/cmake_prefix_path.dsv
+source;share/mi_ackermann_viz_static/hook/cmake_prefix_path.sh
+source;share/mi_ackermann_viz_static/local_setup.bash
+source;share/mi_ackermann_viz_static/local_setup.dsv
+source;share/mi_ackermann_viz_static/local_setup.ps1
+source;share/mi_ackermann_viz_static/local_setup.sh
+source;share/mi_ackermann_viz_static/local_setup.zsh

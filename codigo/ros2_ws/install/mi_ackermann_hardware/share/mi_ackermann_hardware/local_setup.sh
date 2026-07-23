@@ -1,0 +1,1 @@
+/home/roboticaandaja/ros2_ws/build/mi_ackermann_hardware/ament_cmake_environment_hooks/local_setup.sh
