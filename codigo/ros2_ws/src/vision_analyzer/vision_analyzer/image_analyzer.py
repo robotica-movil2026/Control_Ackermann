@@ -20,10 +20,18 @@ class ImageAnalyzer(Node):
         self._api_key = self.declare_parameter('api_key', '').value
         if not self._api_key:
             self._api_key = os.environ.get('GEMINI_API_KEY', '')
-        self._model = self.declare_parameter('model', 'gemini-2.0-flash').value
+        self._model = self.declare_parameter('model', 'gemini-3.5-flash').value
+        self._max_dim = self.declare_parameter('max_dimension', 640).value
         self._prompt = self.declare_parameter(
             'prompt',
-            'Que tipo de edificio aparece en la imagen. Responde en formato corto.'
+            'Ignora completamente el soporte fisico de la imagen (pantalla de celular, monitor, '
+            'papel impreso, carton, etc.). Analiza SOLO la escena real mostrada y responde en '
+            'JSON sin markdown:\n'
+            '{\n'
+            '  "tipo_lugar": "Tienda | Ferreteria | Panaderia | Drogueria | Restaurante | Casa | Centro comercial | '
+            'Edificio industrial | Oficina | Parque | Otro",\n'
+            '  "descripcion": "texto breve (~15 palabras) con los elementos mas representativos ignorando los elementos moviles (bicicletas, carros, personas)",\n'
+            '}'
         ).value
 
         self._bridge = cv_bridge.CvBridge()
@@ -54,7 +62,12 @@ class ImageAnalyzer(Node):
 
         try:
             cv_img = self._bridge.imgmsg_to_cv2(self._latest, 'bgr8')
-            _, buf = cv2.imencode('.jpg', cv_img)
+            h, w = cv_img.shape[:2]
+            if max(h, w) > self._max_dim:
+                scale = self._max_dim / max(h, w)
+                cv_img = cv2.resize(cv_img, (int(w * scale), int(h * scale)),
+                                     interpolation=cv2.INTER_AREA)
+            _, buf = cv2.imencode('.jpg', cv_img, [cv2.IMWRITE_JPEG_QUALITY, 85])
             pil_img = PILImage.open(BytesIO(buf.tobytes()))
 
             response = self._client.models.generate_content(
