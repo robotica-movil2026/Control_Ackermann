@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 10  # Hz
+    update_rate: 100  # Hz
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
@@ -11,11 +11,12 @@ controller_manager:
 
 bicycle_steering_controller:
   ros__parameters:
-    traction_joints_names: ['virtual_rear_wheel_joint']
-    steering_joints_names: ['virtual_front_wheel_joint']
+    traction_joints_names: [rear_wheel_joint]
 
-    wheelbase: 0.12
-    traction_wheel_radius: 0.02
+    steering_joints_names: [front_wheel_joint]
+
+    wheelbase: 0.325
+    traction_wheel_radius: 0.05
 
     reference_timeout: 2.0
 

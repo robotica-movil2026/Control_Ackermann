@@ -8,15 +8,15 @@ namespace mi_ackermann_hardware {
 // Lee los parámetros del URDF. Todavía no abre conexión con el EV3.
 // ─────────────────────────────────────────────────────────────────────────────
 hardware_interface::CallbackReturn AckermannHardware::on_init
-    (const hardware_interface::HardwareComponentInterfaceParams & params)
+    (const hardware_interface::HardwareInfo & info)
 {
-    if (hardware_interface::SystemInterface::on_init(params) !=
+    if (hardware_interface::SystemInterface::on_init(info) !=
         hardware_interface::CallbackReturn::SUCCESS)
     {
         return hardware_interface::CallbackReturn::ERROR;
     }
 
-    info_ = params.hardware_info;
+    info_ = info;
 
     ip_   = info_.hardware_parameters["ip"];
     port_ = std::stoi(info_.hardware_parameters["port"]);
@@ -200,7 +200,7 @@ hardware_interface::return_type AckermannHardware::read
 {
     (void)time;
 
-    double vel = driver_->getTractionVelocityRadS();
+    double vel = - driver_->getTractionVelocityRadS();
 
     // filtro de ruido — evita movimiento fantasma por lecturas pequeñas
     if (std::abs(vel) < 0.03) { vel = 0.0; }

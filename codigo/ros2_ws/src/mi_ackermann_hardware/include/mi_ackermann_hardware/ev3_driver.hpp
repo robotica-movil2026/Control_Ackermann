@@ -1,29 +1,27 @@
 #ifndef EV3_DRIVER_HPP
 #define EV3_DRIVER_HPP
 
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <cmath>
-#include <stdexcept>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <cstring>
-#include <cerrno>
-
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Constantes de conversión
 // ─────────────────────────────────────────────────────────────────────────────
 
-constexpr double COUNTS_PER_REV        = 360.0;
-constexpr double LARGE_MOTOR_MAX_RAD_S = 17.80;
-constexpr double MEDIUM_MOTOR_MAX_RAD_S = 26.18;
+// Ambos motores (Large y Medium) tienen 360 counts por revolución
+#define COUNTS_PER_REV        360.0
+
+// 1 revolución = 2π radianes  →  1 count = 2π/360 radianes
+#define COUNTS_TO_RAD         (2.0 * M_PI / COUNTS_PER_REV)
+
+// Velocidad máxima del motor Large EV3 en rad/s  (~170 RPM)
+#define LARGE_MOTOR_MAX_RAD_S  17.80
+
+// Velocidad máxima del motor Medium EV3 en rad/s  (~250 RPM)
+#define MEDIUM_MOTOR_MAX_RAD_S 26.18
+
+// El EV3 recibe velocidades como porcentaje [-100, 100]
+// Para convertir rad/s a porcentaje dividimos por la velocidad máxima
+// y multiplicamos por 100
+#define RAD_S_TO_PCT_LARGE(v)  ((v) / LARGE_MOTOR_MAX_RAD_S  * 100.0)
+#define RAD_S_TO_PCT_MEDIUM(v) ((v) / MEDIUM_MOTOR_MAX_RAD_S * 100.0)
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Tipo de motor — necesario para usar la constante correcta
@@ -42,6 +40,20 @@ enum class EV3MotorType {
 //   EV3 → RPi5:  "pos_traccion_counts,vel_traccion_pct,pos_direccion_deg\n"
 //                 ejemplo: "1523,44.8,14.9\n"
 // ─────────────────────────────────────────────────────────────────────────────
+
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <cmath>
+#include <stdexcept>
+
+// Socket POSIX (Linux — Raspberry Pi 5)
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <cstring>
+#include <errno.h>
 
 class EV3Driver {
 public:
@@ -146,8 +158,8 @@ public:
 
         // tracción: rad/s → porcentaje [-100, 100]
         double vel_pct = (traction_type_ == EV3MotorType::LARGE)
-                         ? (-traction_cmd_rad_s_ / LARGE_MOTOR_MAX_RAD_S * 100.0)
-                         : (traction_cmd_rad_s_ / MEDIUM_MOTOR_MAX_RAD_S * 100.0);
+                         ? RAD_S_TO_PCT_LARGE(-traction_cmd_rad_s_)
+                         : RAD_S_TO_PCT_MEDIUM(traction_cmd_rad_s_);
 
         // dirección: rad → grados
         double dir_deg = steering_cmd_rad_ * (180.0 / M_PI);
@@ -210,7 +222,7 @@ private:
             // posición de tracción: counts → radianes
             std::getline(ss, token, ',');
             double pos_counts = std::stod(token);
-            traction_position_rad_ = pos_counts * (2.0 * M_PI / COUNTS_PER_REV);
+            traction_position_rad_ =  (pos_counts * COUNTS_TO_RAD) ;
 
             // velocidad de tracción: porcentaje → rad/s
             std::getline(ss, token, ',');

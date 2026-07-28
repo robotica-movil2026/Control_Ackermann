@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:arg name="controllers_config" default=""/>
+
+  <xacro:macro name="carlikebot_gazebo" params="prefix">
+
+    <!-- gz_ros2_control -->
+    <gazebo>
+      <plugin filename="gz_ros2_control-system"
+              name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+        <parameters>$(arg controllers_config)</parameters>
+        <robot_param>robot_description</robot_param>
+        <robot_param_node>robot_state_publisher</robot_param_node>
+      </plugin>
+    </gazebo>
+
+    <!-- Chasis -->
+    <gazebo reference="${prefix}chassis_link">
+      <visual>
+        <material>
+          <ambient>1.0 0.5 0.0 1.0</ambient>
+          <diffuse>1.0 0.5 0.0 1.0</diffuse>
+        </material>
+      </visual>
+    </gazebo>
+
+    <!-- Rueda delantera -->
+    <gazebo reference="${prefix}front_wheel">
+
+      <mu1>5.0</mu1>
+      <mu2>5.0</mu2>
+
+      <kp>1000000</kp>
+      <kd>100</kd>
+
+      <fdir1>1 0 0</fdir1>
+
+      <visual>
+        <material>
+          <ambient>0 0 0 1</ambient>
+          <diffuse>0 0 0 1</diffuse>
+        </material>
+      </visual>
+
+    </gazebo>
+
+    <!-- Rueda trasera -->
+    <gazebo reference="${prefix}rear_wheel">
+
+      <mu1>5.0</mu1>
+      <mu2>5.0</mu2>
+
+      <kp>1000000</kp>
+      <kd>100</kd>
+
+      <fdir1>1 0 0</fdir1>
+
+      <visual>
+        <material>
+          <ambient>0 0 0 1</ambient>
+          <diffuse>0 0 0 1</diffuse>
+        </material>
+      </visual>
+
+    </gazebo>
+
+  </xacro:macro>
+
+</robot>

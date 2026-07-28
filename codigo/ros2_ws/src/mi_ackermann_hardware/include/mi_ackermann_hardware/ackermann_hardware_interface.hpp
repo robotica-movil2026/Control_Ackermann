@@ -12,7 +12,7 @@ public:
 
     // ── Ciclo de vida ─────────────────────────────────────────────────────────
     hardware_interface::CallbackReturn
-        on_init(const hardware_interface::HardwareComponentInterfaceParams & params) override;
+        on_init(const hardware_interface::HardwareInfo & info) override;
 
     hardware_interface::CallbackReturn
         on_configure(const rclcpp_lifecycle::State & previous_state) override;
