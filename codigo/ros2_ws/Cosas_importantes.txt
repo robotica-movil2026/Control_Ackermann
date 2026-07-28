@@ -1,0 +1,20 @@
+Archivo con la ip: /home/roboticaandaja/ros2_ws/install/mi_ackermann_description/share/mi_ackermann_description/urdf/mobile_base.ros2_control.xacro
+
+Convertir cmd_vel a bicycle:
+ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -p stamped:=true --remap cmd_vel:=/bicycle_steering_controller/reference
+
+ros2 run tf2_ros static_transform_publisher 0.025 0.06 0.017 0 -0.087 1.5708 base_link laser
+
+ros2 launch slam_toolbox online_async_launch.py params_file:=./src/mi_ackermann_bringup/config/mapper_params_online_async.yaml use_sim_time:=false
+
+
+
+Como van las cosas:
+
+ros2 launch mi_ackermann_bringup carlikebot.launch.xml 
+ros2 run tf2_ros static_transform_publisher 0.025 0.06 0.17 0 0 0  base_link laser
+ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -p stamped:=true --remap cmd_vel:=/bicycle_steering_controller/reference
+ros2 launch sllidar_ros2 sllidar_c1_launch.py
+ros2 launch rf2o_laser_odometry rf2o_laser_odometry.launch.py 
+ros2 launch slam_toolbox online_async_launch.py params_file:=./src/mi_ackermann_bringup/config/mapper_params_online_async.yaml use_sim_time:=true
+rviz2

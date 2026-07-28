@@ -22,7 +22,7 @@
         <xacro:if value="${hardware_type == 'real'}">
           <plugin>mi_ackermann_hardware/AckermannHardware</plugin>
           <param name="ip">192.168.0.110</param>
-          <param name="port">1300</param>
+          <param name="port">2100</param>
           <param name="traction_type">large</param>
         </xacro:if>
 
