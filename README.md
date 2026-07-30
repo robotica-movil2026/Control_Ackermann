@@ -277,14 +277,17 @@ Paquete "gemelo" ligero de `mi_ackermann_description`, pensado exclusivamente pa
 
 ---
 
-## 🌳 Árbol de transformadas (TF2)
+## Árbol de transformadas (TF2)
 
 La cadena de transformadas del sistema, de arriba hacia abajo, es:
 
-```
-map ──► odom ──► base_link ──┬──► base_footprint
-                              └──► laser (LiDAR)
-                                   (+ links visuales de ruedas, chasis, etc.)
+```mermaid
+graph LR
+    map --> odom
+    odom --> base_link
+    base_link --> base_footprint
+    base_link --> laser["laser (LiDAR)"]
+    base_link --> ruedas["links visuales (ruedas, chasis, etc.)"]
 ```
 
 | Transformada | Publicada por | Naturaleza |
@@ -296,7 +299,7 @@ map ──► odom ──► base_link ──┬──► base_footprint
 
 ### Comando de TF estática del láser
 
-El valor exacto depende de dónde quedó montado físicamente el RPLiDAR C1 respecto al `base_link`. En el proyecto se usaron **dos calibraciones distintas** a lo largo del desarrollo (documentadas en `Cosas_importantes.txt`):
+El valor exacto depende de dónde quedó montado físicamente el RPLiDAR C1 respecto al `base_link`. En el proyecto se usaron **dos calibraciones distintas** a lo largo del desarrollo:
 
 ```bash
 # Calibración con inclinación (pitch) — primeras pruebas
@@ -306,9 +309,9 @@ ros2 run tf2_ros static_transform_publisher 0.025 0.06 0.017 0 -0.087 1.5708 bas
 ros2 run tf2_ros static_transform_publisher 0.025 0.06 0.17 0 0 0 base_link laser
 ```
 
-Formato: `x y z yaw pitch roll parent_frame child_frame` (sintaxis posicional legacy de `static_transform_publisher`). En `full_bringup.launch.py` esto se hace de forma más robusta con argumentos explícitos `--x --y --z --roll --pitch --yaw` para evitar confundir el orden roll/pitch/yaw.
+La segunda ofrece una ventaja importante y es la alineación automatica entre los marcos de referencia.
 
-> ⚠️ **Regla de oro documentada en el proyecto:** nunca debe haber dos publicadores para la misma transformada (mismo padre + mismo hijo) al mismo tiempo — por ejemplo, `robot_state_publisher` publicando `base_link → laser_frame` **a la vez** que un `static_transform_publisher` manual. Esto genera un "salto" constante entre ambos valores en la TF, el mismo problema que puede ocurrir si dos nodos publicaran `odom → base_link` simultáneamente.
+Formato: `x y z yaw pitch roll parent_frame child_frame` (sintaxis posicional legacy de `static_transform_publisher`). En `full_bringup.launch.py` esto se hace de forma más robusta con argumentos explícitos `--x --y --z --roll --pitch --yaw` para evitar confundir el orden roll/pitch/yaw.
 
 ### Generar el árbol de TF (`view_frames`)
 
@@ -319,9 +322,9 @@ ros2 run tf2_tools view_frames
 
 ---
 
-## 📡 Odometría por láser — RF2O
+## Odometría por láser — RF2O
 
-`rf2o_laser_odometry` reemplaza a la odometría por encoders del EV3 (más ruidosa, con deslizamiento de ruedas pequeñas) por una **odometría basada en scan-matching** entre escaneos consecutivos del LiDAR.
+La odometria de las ruedas, presenta complicaciones a la hora de generarla, debido a problemas de ruido y presición el marco de odometria saltaba constantemente, generando problemas constantes en el **SLAM** y en la **navegación**, debido a esto se planteo el uso de otro tipo de fuentes para una toma de odometria, entre ellas, se valoro el uso de sensor `IMU`, `Laser Scan Matcher` y `rf2o_laser_odometry`, de las cuales, se selecciono `rf2o_laser_odometry` para reemplazar a la odometría por encoders del EV3 (más ruidosa, con deslizamiento de ruedas pequeñas) por una **odometría basada en scan-matching** entre escaneos consecutivos del LiDAR, debido a que es la que mejor resultados ofrece.
 
 **Configuración (`rf2o_laser_odometry.launch.py`):**
 
@@ -333,15 +336,15 @@ parameters=[{
     'base_frame_id':    'base_link',
     'odom_frame_id':    'odom',
     'init_pose_from_topic': '',
-    'freq': 30.0,
+    'freq': 10.0,
 }]
 ```
 
-Al tener `publish_tf: True`, este nodo es el responsable directo de la transformada `odom → base_link`, corriendo a 30 Hz — la frecuencia con la que se actualiza la posición estimada del robot entre reajustes de SLAM/AMCL sobre `map → odom`.
+Al tener `publish_tf: True`, este nodo es el responsable directo de la transformada `odom → base_link`, corriendo a 10 Hz — la frecuencia con la que se actualiza la posición estimada del robot entre reajustes de SLAM/AMCL sobre `map → odom`.
 
 ---
 
-## 🗺️ SLAM — `slam_toolbox`
+## SLAM — `slam_toolbox`
 
 El proyecto usa **`slam_toolbox` en modo asíncrono** (`online_async_launch.py`), con dos archivos de parámetros según la fase:
 
@@ -371,7 +374,7 @@ Copia del anterior con dos cambios para **localizarse sobre un mapa ya guardado*
 
 ```yaml
 mode: localization
-map_file_name: ~/ros2_ws/maps/soyelmapa2.pgm
+map_file_name: ~/ros2_ws/maps/soyelmapa2.yaml
 ```
 
 ### Guardar el mapa (serialización)
@@ -391,7 +394,7 @@ Este proyecto incluye varios mapas ya generados como evidencia de las pruebas de
 
 ---
 
-## 🧭 Navegación — Nav2
+## Navegación — Nav2
 
 El stack de Nav2 (`nav2_params.yaml`) está **específicamente calibrado para la cinemática bicycle/Ackermann** del robot, no para un robot diferencial genérico. Parámetros derivados de la geometría real:
 
@@ -446,8 +449,6 @@ amcl:
   set_initial_pose: false   # se define a mano con "2D Pose Estimate" en RViz
 ```
 
-> ⚠️ AMCL no incluye un modelo de movimiento Ackermann nativo en Nav2; se usa el modelo diferencial como **aproximación razonable a baja velocidad** (documentado explícitamente en el propio `nav2_params.yaml`).
-
 ### `collision_monitor` — el "puente" de velocidades
 
 Un detalle particular de esta integración: Nav2 internamente publica velocidades en `cmd_vel_smoothed`, pero el robot espera comandos en `/bicycle_steering_controller/reference`. El `collision_monitor` se usa como **remapeador nativo**:
@@ -465,7 +466,7 @@ Así, el `collision_monitor` no solo vigila colisiones inminentes con el polígo
 
 ---
 
-## 🛠️ Instalación y compilación
+## Instalación y compilación
 
 ```bash
 # 1. Clonar/copiar el workspace
@@ -492,9 +493,9 @@ source install/setup.bash
 
 ---
 
-## 💻 Comandos — flujos de trabajo completos
+## Comandos — flujos de trabajo completos
 
-### 🔹 0. Comandos sueltos de referencia
+### 0. Comandos sueltos de referencia
 
 ```bash
 # Teleoperación remapeada al controlador tipo bicicleta (TwistStamped)
@@ -507,7 +508,7 @@ ros2 run tf2_ros static_transform_publisher 0.025 0.06 0.17 0 0 0 base_link lase
 
 ---
 
-### 🔹 1. MAPEO manual con teclado (SLAM online)
+### 1. MAPEO manual con teclado (SLAM online)
 
 Abrir **7 terminales**, todas con el workspace *sourced* (`source install/setup.bash`):
 
@@ -540,9 +541,11 @@ rviz2
 
 Para **guardar el mapa**: en el plugin *Slam Toolbox* de RViz → botón derecho → **Serialize Map** → nombre (ej. `mapa_nuevo`) → se guarda en `maps/mapa_nuevo.data` y `maps/mapa_nuevo.posegraph`.
 
+
+
 ---
 
-### 🔹 2. NAVEGACIÓN AUTÓNOMA sobre mapa guardado (SLAM localization + Nav2)
+### 2. NAVEGACIÓN AUTÓNOMA sobre mapa guardado (SLAM localization + Nav2)
 
 **Paso previo:** crear `mapper_params_localization.yaml` a partir de `mapper_params_online_async.yaml` cambiando:
 - `mode: mapping` → `mode: localization`
@@ -580,7 +583,7 @@ rviz2
 
 ---
 
-### 🔹 3. NAVEGACIÓN con AMCL sobre mapa fijo (`map_server` + `amcl`)
+### 3. NAVEGACIÓN con AMCL sobre mapa fijo (`map_server` + `amcl`)
 
 Variante más clásica de Nav2, usando el `.yaml`/`.pgm` exportado (`maps/soyelmapa.yaml`) en vez de re-usar `slam_toolbox`:
 
@@ -603,7 +606,7 @@ rviz2
 
 ---
 
-### 🔹 4. Análisis de escena con visión (cámara Logitech + Gemini)
+### 4. Análisis de escena con visión (cámara Logitech + Gemini)
 
 ```bash
 # Publicar la cámara Logitech como /image_raw
@@ -622,7 +625,7 @@ ros2 topic echo /scene_analysis
 
 ---
 
-### 🔹 5. Todo en uno (launch integrado)
+### 5. Todo en uno (launch integrado)
 
 ```bash
 ros2 launch mi_ackermann_bringup full_bringup.launch.py \
@@ -631,13 +634,13 @@ ros2 launch mi_ackermann_bringup full_bringup.launch.py \
   use_manual_lidar_tf:=true
 ```
 
-### 🔹 6. Simulación en Gazebo (sin hardware real)
+### 6. Simulación en Gazebo (sin hardware real)
 
 ```bash
 ros2 launch mi_ackermann_bringup carlikebot_gazebo.launch.xml
 ```
 
-### 🔹 7. Inspeccionar el árbol de TF en cualquier momento
+### 7. Inspeccionar el árbol de TF en cualquier momento
 
 ```bash
 ros2 run tf2_tools view_frames
@@ -645,61 +648,50 @@ ros2 run tf2_tools view_frames
 
 ---
 
-## 📊 Resultados
+## Resultados
 
-### 🌳 Árbol de TF (`view_frames`)
+### Árbol de TF (`view_frames`)
 
 Resultado real generado con `ros2 run tf2_tools view_frames` durante una sesión de mapeo, mostrando la cadena completa `map → odom → base_link → {base_footprint, laser}`:
 
 ![Árbol de TF generado con view_frames](assets/view_frames_tf_tree.png)
 
-> 📌 *Espacio para complementar con capturas adicionales de `view_frames` en distintas etapas (solo bringup, con SLAM activo, con Nav2 activo) si se desea comparar la evolución del árbol de transformadas.*
+> *Espacio para complementar con capturas adicionales de `view_frames` en distintas etapas (solo bringup, con SLAM activo, con Nav2 activo) si se desea comparar la evolución del árbol de transformadas.*
 
 ---
 
-### 🗺️ Mapa generado por SLAM
+### Mapa generado por SLAM
 
 Mapa de ocupación real (`maps/soyelmapa.pgm` + `soyelmapa.yaml`) generado durante una sesión de mapeo con `slam_toolbox`:
 
 ![Mapa generado por SLAM Toolbox](assets/mapa_slam_generado.png)
 
-> 📌 *Espacio reservado para más capturas del mapa: vista completa desde RViz con el robot posicionado, comparación entre `Mapa_original` y `mapa_serial`, o el mapa `soyelmapa2` usado en localización.*
+> *Espacio reservado para más capturas del mapa: vista completa desde RViz con el robot posicionado, comparación entre `Mapa_original` y `mapa_serial`, o el mapa `soyelmapa2` usado en localización.*
 
 `![Mapa completo desde RViz](assets/mapa_rviz_completo.png)`
 
 ---
 
-### 🎥 Video — Mapeo con SLAM (teleoperado)
+### Video — Mapeo con SLAM (teleoperado)
 
 Video del proceso de mapeo en vivo, mostrando el crecimiento del mapa en RViz mientras el robot es teleoperado con teclado (flujo de la sección [1. MAPEO manual con teclado](#-1-mapeo-manual-con-teclado-slam-online)):
 
-`![Video de mapeo por SLAM](assets/video_mapeo_slam.mp4)`
-
-> 📌 *Insertar aquí el video (o GIF) de la sesión de mapeo. Recomendado: capturar pantalla de RViz mientras se corre el flujo completo de la Terminal 1 a la 7.*
+`![https://www.youtube.com/watch?v=-kdkcimfvvM](assets/video_mapeo_slam.mp4)`
+`![https://www.youtube.com/watch?v=-kdkcimfvvM](assets/video_mapeo_slam.mp4)`
 
 ---
 
-### 🎥 Video — Navegación con generación de mapa en vivo (SLAM + Nav2)
+### Video — Navegación con generación de mapa en vivo (SLAM + Nav2)
 
 Video de navegación autónoma mientras `slam_toolbox` sigue actualizando el mapa en tiempo real (flujo de la sección [2. NAVEGACIÓN AUTÓNOMA sobre mapa guardado](#-2-navegación-autónoma-sobre-mapa-guardado-slam-localization--nav2)):
 
-`![Video de navegación con SLAM en vivo](assets/video_navegacion_slam_vivo.mp4)`
+`![xx](assets/video_navegacion_slam_vivo.mp4)`
 
-> 📌 *Insertar aquí el video mostrando el robot recibiendo un "2D Nav Goal" y ejecutando la trayectoria planificada por `SmacPlannerHybrid` mientras el costmap se actualiza.*
-
----
-
-### 🎥 Video — Navegación con AMCL
-
-Video de navegación autónoma sobre mapa fijo usando `map_server` + `amcl` (flujo de la sección [3. NAVEGACIÓN con AMCL](#-3-navegación-con-amcl-sobre-mapa-fijo-map_server--amcl)):
-
-`![Video de navegación con AMCL](assets/video_navegacion_amcl.mp4)`
-
-> 📌 *Insertar aquí el video mostrando la inicialización con "2D Pose Estimate", la nube de partículas de AMCL convergiendo, y la navegación final hasta el destino.*
 
 ---
 
-## 🐞 Problemas conocidos y notas de depuración
+
+## Problemas conocidos y notas de depuración
 
 Estas notas están documentadas directamente en el código y en la bitácora del proyecto (`Cosas_importantes.txt` y comentarios en los launch files):
 
@@ -711,15 +703,3 @@ Estas notas están documentadas directamente en el código y en la bitácora del
 - **IP del EV3 hardcodeada:** si el EV3 cambia de IP (DHCP), hay que actualizar manualmente `mobile_base.ros2_control.xacro` en `mi_ackermann_description` y recompilar/reinstalar ese paquete.
 
 ---
-
-## 🔭 Mejoras futuras
-
-- Migrar la IP del EV3 de valor fijo en el xacro a un argumento de lanzamiento (`LaunchConfiguration`), evitando recompilar ante cambios de red.
-- Evaluar un modelo de movimiento Ackermann dedicado para AMCL (actualmente aproximado con modelo diferencial).
-- Integrar `vision_analyzer` como capa semántica dentro de Nav2 (por ejemplo, anotar el mapa con los resultados de `/scene_analysis`).
-- Unificar `slam_params.yaml` con `mapper_params_online_async.yaml` (actualmente existen configuraciones de SLAM ligeramente redundantes entre `full_bringup.launch.py` y el flujo manual documentado en `Cosas_importantes.txt`).
-- Automatizar la generación de `mapper_params_localization.yaml` a partir de `mapper_params_online_async.yaml` (hoy es un paso manual documentado).
-
----
-
-*Documento generado a partir del contenido íntegro del workspace `ros2_ws` (paquetes, launch files, configuraciones YAML/xacro, bitácora de comandos y artefactos de mapeo).*
