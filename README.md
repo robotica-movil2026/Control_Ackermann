@@ -1,3 +1,4 @@
+<img width="1200" height="1600" alt="6" src="https://github.com/user-attachments/assets/05769870-1aff-4ffe-ad1f-7014d987be8f" />
 # Proyecto Final FRM — Robot LEGO EV3 + Raspberry Pi 5 con direccion tipo ackermann
 
 ## 📑 Tabla de contenidos
