@@ -236,7 +236,7 @@ El bloque `<ros2_control>` soporta 3 modos intercambiables vía el argumento `ha
 
 ---
 
-## ⚙️ Paquete `mi_ackermann_hardware`
+## Paquete `mi_ackermann_hardware`
 
 Es el **plugin `pluginlib` de `ros2_control`** que materializa la conexión con el mundo real. Se compila como librería C++ y se declara en `mi_ackermann_hardware.xml` para que `ros2_control_node` pueda cargarlo dinámicamente por nombre (`mi_ackermann_hardware/AckermannHardware`).
 
@@ -250,7 +250,7 @@ Este diseño desacopla completamente el protocolo EV3 (sockets, texto plano, cou
 
 ---
 
-## 🧩 Otros paquetes del stack
+## Otros paquetes del stack
 
 ### `rf2o_laser_odometry`
 Paquete de terceros (integrado como *source* dentro del workspace) que calcula **odometría 2D por scan-matching** directamente del `/scan` del LiDAR, sin depender de encoders. Publica el tópico `/odometry` y la TF `odom → base_link`. Es la fuente de odometría real del sistema (en vez de `bicycle_steering_controller`, cuyo `enable_odom_tf` está deshabilitado).
