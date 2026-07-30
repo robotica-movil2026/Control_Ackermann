@@ -2,6 +2,12 @@
 
 <img width="1200" height="1600" alt="6" src="https://github.com/user-attachments/assets/05769870-1aff-4ffe-ad1f-7014d987be8f" />
 
+https://youtube.com/shorts/OvnS0Iza-vA?si=ksYd9Vok_0_Z9SCn
+https://youtube.com/shorts/rX5so5Xi6SM?si=RKQAg1PxmNvUryRc
+https://youtube.com/shorts/TOCvV_U80M4?si=kjCOuEDGMjfBAXJw
+https://youtu.be/-kdkcimfvvM?si=FcxcHx5Se8YGAp9K
+https://youtu.be/-kdkcimfvvM?si=EzWeBxrMEHP7YW63
+
 ## 📑 Tabla de contenidos
 
 1. [Visión general del sistema](#-visión-general-del-sistema)
