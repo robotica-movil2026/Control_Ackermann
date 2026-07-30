@@ -21,9 +21,9 @@
 
 ---
 
-## 🧭 Visión general del sistema
+##  Visión general del sistema
 
-El prototipo es un robot movil con dirección tipo ackermann (carlike-bicicleta): una rueda trasera de tracción (motor grande del EV3) y una rueda delantera de dirección (motor pequeño del EV3 visualmente el chasis tiene 4 ruedas (2 traseras + 2 delanteras) para estabilidad física, pero **cinemáticamente se modela como bicycle model** con dos "ruedas virtuales" (`virtual_rear_wheel` y `virtual_front_wheel`) en el centro de cada eje — las ruedas reales izquierda/derecha son solo *mimic joints* visuales que copian el movimiento de la rueda virtual.
+El prototipo es un robot movil con dirección tipo ackermann.: una rueda trasera de tracción (motor grande del EV3) y una rueda delantera de dirección (motor pequeño del EV3) el prototipo  tiene 4 ruedas para estabilidad física, pero cinemáticamente se modela como carlike-bicicleta. Para el uso de ROS2 y la integracion con el lidar se usa la PI5 con ubuntu 24.04. la conexión entre estos elementos se detalla en el siguiente cuadro:
 
 ```
 ┌─────────────────────────────┐        WiFi / TCP:2100        ┌──────────────────────────────┐
@@ -55,7 +55,7 @@ El prototipo es un robot movil con dirección tipo ackermann (carlike-bicicleta)
 
 ---
 
-## 🔩 Arquitectura de hardware
+## Arquitectura de hardware
 
 ### El puente EV3 ↔ Raspberry Pi
 
@@ -84,7 +84,7 @@ La comunicación entre la Raspberry Pi 5 y el EV3 **no usa ningún nodo ROS 2 in
 <param name="traction_type">large</param>
 ```
 
-> ⚠️ La IP del EV3 (`192.168.0.110`) y el puerto (`2100`) están **hardcodeados en el xacro** — si cambia la red o el EV3 obtiene otra IP, hay que actualizar `mobile_base.ros2_control.xacro` en `mi_ackermann_description` (referenciado explícitamente en `Cosas_importantes.txt` como el archivo "con la IP").
+>  La IP del EV3 (`192.168.0.110`) y el puerto (`2100`) están **hardcodeados en el xacro** — si cambia la red o el EV3 obtiene otra IP, hay que actualizar `mobile_base.ros2_control.xacro` en `mi_ackermann_description` (referenciado explícitamente en `Cosas_importantes.txt` como el archivo "con la IP").
 
 ### Ciclo de vida del hardware component
 
