@@ -67,7 +67,7 @@ El prototipo es un robot movil con dirección tipo ackermann.: una rueda trasera
 
 ### El puente EV3 ↔ Raspberry Pi
 
-La comunicación entre la Raspberry Pi 5 y el EV3 **no usa ningún nodo ROS 2 intermedio**: el propio *hardware component* de `ros2_control` (`mi_ackermann_hardware`) abre y mantiene la conexión TCP en su ciclo de vida (`on_configure` → `driver_->init()`). Esto significa que **no hace falta lanzar nada aparte para "conectar" con el EV3** — el `controller_manager` se encarga solo al arrancar `ros2_control_node`.
+El *hardware component* de `ros2_control` (`mi_ackermann_hardware`) abre y mantiene la conexión TCP en su ciclo de vida (`on_configure` → `driver_->init()`). Esto significa que **no hace falta lanzar nada aparte para "conectar" con el EV3** — el `controller_manager` se encarga solo al arrancar `ros2_control_node`.
 
 **Protocolo TCP (texto plano, una línea por ciclo, definido en `ev3_driver.hpp`):**
 
@@ -92,8 +92,6 @@ La comunicación entre la Raspberry Pi 5 y el EV3 **no usa ningún nodo ROS 2 in
 <param name="traction_type">large</param>
 ```
 
->  La IP del EV3 (`192.168.0.110`) y el puerto (`2100`) están **hardcodeados en el xacro** — si cambia la red o el EV3 obtiene otra IP, hay que actualizar `mobile_base.ros2_control.xacro` en `mi_ackermann_description` (referenciado explícitamente en `Cosas_importantes.txt` como el archivo "con la IP").
-
 ### Ciclo de vida del hardware component
 
 `AckermannHardware` implementa la máquina de estados estándar de `ros2_control`:
@@ -116,7 +114,7 @@ La comunicación entre la Raspberry Pi 5 y el EV3 **no usa ningún nodo ROS 2 in
 
 ---
 
-## 📂 Estructura del workspace
+##  Estructura del workspace
 
 ```
 ros2_ws/
@@ -129,13 +127,12 @@ ros2_ws/
 │   ├── sllidar_ros2/                  # Driver del RPLiDAR C1 (Slamtec)
 │   └── vision_analyzer/               # Nodo Python: analiza /image_raw con Google Gemini
 ├── maps/                              # Mapas serializados (.data/.posegraph) y mapas ocupacionales (.pgm/.yaml)
-├── Cosas_importantes.txt              # Bitácora de comandos de referencia del proyecto
 └── frames_*.pdf / *.gv                # Salidas de `ros2 run tf2_tools view_frames`
 ```
 
 ---
 
-## 🚀 Paquete `mi_ackermann_bringup`
+##  Paquete `mi_ackermann_bringup`
 
 Es el **paquete integrador**: no contiene lógica propia, sino los *launch files* y archivos de configuración (`.yaml`) que orquestan todos los demás paquetes para levantar el robot real, simularlo en Gazebo, mapear y navegar.
 
@@ -143,10 +140,8 @@ Es el **paquete integrador**: no contiene lógica propia, sino los *launch files
 
 | Archivo | Propósito |
 |---|---|
-| **`carlikebot.launch.xml`** | El launch **principal para el robot real**. Levanta `ros2_control_node` con el plugin `AckermannHardware` (esto abre la conexión TCP con el EV3), `robot_state_publisher`, y hace *spawn* de `joint_state_broadcaster` + `bicycle_steering_controller`. Además publica 10 mensajes de velocidad casi-cero al arrancar (truco necesario para "despertar" la odometría del controlador). |
-| **`carlikebot_gazebo.launch.xml`** | Equivalente para **simulación en Gazebo Harmonic**: procesa el xacro con `sim_mode:=true` (usa el plugin `gz_ros2_control/GazeboSimSystem` en vez del hardware real), levanta Gazebo con el mundo `my_world.sdf`, un `ros_gz_bridge` para el reloj de simulación, y hace *spawn* del robot y sus controladores. |
-| **`carlikebot_remap.launch.xml`** | Variante de `carlikebot.launch.xml` que además publica una TF estática `map → odom` y un *relay* que remapea `/cmd_vel` (Twist genérico) hacia `/bicycle_steering_controller/reference` (TwistStamped), útil para integrarse con nodos externos que publiquen `Twist` plano. |
-| **`full_bringup.launch.py`** | Launch **"todo en uno"** (Python) que integra `carlikebot.launch.xml` + TF estática láser configurable por argumentos + `sllidar_ros2` + `slam_toolbox` (mapping) + `teleop_twist_keyboard` en una ventana `xterm` aparte (necesario porque el teleop necesita foco de teclado propio). Expone argumentos como `use_keyboard`, `slam_params_file`, `serial_port`, `laser_frame_id`, y los 6 parámetros de la TF del láser (`lidar_tf_x/y/z/roll/pitch/yaw`). |
+| **`carlikebot.launch.xml`** | El launch **principal para el robot real**. Levanta `ros2_control_node` con el plugin `AckermannHardware` (esto abre la conexión TCP con el EV3), `robot_state_publisher`, y hace *spawn* de `joint_state_broadcaster` + `bicycle_steering_controller`. |
+
 
 ### Archivos de configuración (`config/`)
 
@@ -183,15 +178,14 @@ Este controlador del paquete `bicycle_steering_controller` (parte de `ros2_contr
 
 ---
 
-## 🧱 Paquete `mi_ackermann_description`
+## Paquete `mi_ackermann_description`
 
-Contiene el modelo del robot en **xacro/URDF**, modular y reutilizable entre robot real, Gazebo y RViz.
+Contiene el modelo del robot en **xacro/URDF**, modular y reutilizable entre robot real y RViz.
 
 ### Jerarquía de archivos xacro
 
 ```
 my_robot.urdf.xacro  (real)  ──┐
-my_robotg.urdf.xacro (gazebo)──┤
                                 ├─ common_propperties.xacro   (materiales/colores)
                                 ├─ mobile_base.xacro          (links + joints físicos)
                                 ├─ mobile_base.ros2_control.xacro  (bloque <ros2_control>)
