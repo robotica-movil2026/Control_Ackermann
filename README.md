@@ -662,24 +662,20 @@ Resultado real generado con `ros2 run tf2_tools view_frames` durante una sesión
 
 ---
 
-### Mapa generado por SLAM
-
-Mapa de ocupación real (`maps/soyelmapa.pgm` + `soyelmapa.yaml`) generado durante una sesión de mapeo con `slam_toolbox`:
-
-![Mapa generado por SLAM Toolbox](assets/mapa_slam_generado.png)
-
-> *Espacio reservado para más capturas del mapa: vista completa desde RViz con el robot posicionado, comparación entre `Mapa_original` y `mapa_serial`, o el mapa `soyelmapa2` usado en localización.*
-
-`![Mapa completo desde RViz](assets/mapa_rviz_completo.png)`
-
----
 
 ### Video — Mapeo con SLAM (teleoperado)
 
 Video del proceso de mapeo en vivo, mostrando el crecimiento del mapa en RViz mientras el robot es teleoperado con teclado (flujo de la sección [1. MAPEO manual con teclado](#-1-mapeo-manual-con-teclado-slam-online)):
 
-`![https://www.youtube.com/watch?v=-kdkcimfvvM](assets/video_mapeo_slam.mp4)`
-`![https://www.youtube.com/watch?v=-kdkcimfvvM](assets/video_mapeo_slam.mp4)`
+
+<a href="https://www.youtube.com/watch?v=-kdkcimfvvM">
+<img src="https://www.youtube.com/watch?v=-kdkcimfvvM/0.jpg" alt="Mapeo vista aerea" width="600">
+</a>
+
+
+<a href="https://www.youtube.com/watch?v=TS5ZrMfOJ-s">
+<img src="https://www.youtube.com/watch?v=TS5ZrMfOJ-s/0.jpg" alt="Mapeo vista teclado" width="600">
+</a>
 
 ---
 
@@ -687,9 +683,9 @@ Video del proceso de mapeo en vivo, mostrando el crecimiento del mapa en RViz mi
 
 Video de navegación autónoma mientras `slam_toolbox` sigue actualizando el mapa en tiempo real (flujo de la sección [2. NAVEGACIÓN AUTÓNOMA sobre mapa guardado](#-2-navegación-autónoma-sobre-mapa-guardado-slam-localization--nav2)):
 
-`![xx](assets/video_navegacion_slam_vivo.mp4)`
-
-
+<a href="https://www.youtube.com/shorts/TOCvV_U80M4">
+<img src="https://www.youtube.com/shorts/TOCvV_U80M4/0.jpg" alt="Mapeo vista teclado" width="600">
+</a>
 ---
 
 
