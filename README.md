@@ -662,14 +662,9 @@ Resultado real generado con `ros2 run tf2_tools view_frames` durante una sesión
 Video del proceso de mapeo en vivo, mostrando el crecimiento del mapa en RViz mientras el robot es teleoperado con teclado (flujo de la sección [1. MAPEO manual con teclado](#-1-mapeo-manual-con-teclado-slam-online)):
 
 
-<a href="https://www.youtube.com/watch?v=-kdkcimfvvM">
-<img src="https://www.youtube.com/watch?v=-kdkcimfvvM/0.jpg" alt="Mapeo vista aerea" width="600">
-</a>
+[![Mapeo SLAM - Movimiento del Robot](https://img.youtube.com/watch?v=-kdkcimfvvM/0.jpg)](https://www.youtube.com/watch?v=-kdkcimfvvM)
 
-
-<a href="https://www.youtube.com/watch?v=TS5ZrMfOJ-s">
-<img src="https://www.youtube.com/watch?v=TS5ZrMfOJ-s/0.jpg" alt="Mapeo vista teclado" width="600">
-</a>
+[![Mapeo SLAM - RVIZ2](https://img.youtube.com/watch?v=TS5ZrMfOJ-s/0.jpg)](https://www.youtube.com/watch?v=TS5ZrMfOJ-s)
 
 ---
 
@@ -677,9 +672,13 @@ Video del proceso de mapeo en vivo, mostrando el crecimiento del mapa en RViz mi
 
 Video de navegación autónoma mientras `slam_toolbox` sigue actualizando el mapa en tiempo real (flujo de la sección [2. NAVEGACIÓN AUTÓNOMA sobre mapa guardado](#-2-navegación-autónoma-sobre-mapa-guardado-slam-localization--nav2)):
 
-<a href="https://www.youtube.com/shorts/TOCvV_U80M4">
-<img src="https://www.youtube.com/shorts/TOCvV_U80M4/0.jpg" alt="Mapeo vista teclado" width="600">
-</a>
+[![Intento de Navegación](https://img.youtube.com/watch?v=qsVAt8MD_1k/0.jpg)](https://www.youtube.com/watch?v=qsVAt8MD_1k)
+
+[![Intento de Navegación](https://img.youtube.com/vi/TOCvV_U80M4/0.jpg)](https://youtube.com/shorts/TOCvV_U80M4)
+
+[![Intento de Navegación](https://img.youtube.com/vi/rX5so5Xi6SM/0.jpg)](https://youtube.com/shorts/rX5so5Xi6SM)
+
+[![Intento de Navegación](https://img.youtube.com/vi/OvnS0Iza-vA/0.jpg)](https://youtube.com/shorts/OvnS0Iza-vA)
 ---
 
 
