@@ -679,6 +679,7 @@ Video de navegación autónoma mientras `slam_toolbox` sigue actualizando el map
 [![Intento de Navegación](https://img.youtube.com/vi/rX5so5Xi6SM/0.jpg)](https://youtube.com/shorts/rX5so5Xi6SM)
 
 [![Intento de Navegación](https://img.youtube.com/vi/OvnS0Iza-vA/0.jpg)](https://youtube.com/shorts/OvnS0Iza-vA)
+
 ---
 
 
