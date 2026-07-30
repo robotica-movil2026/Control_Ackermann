@@ -1,12 +1,4 @@
-# 🚲 mi_ackermann — Robot tipo *bicycle* (Ackermann) con LEGO EV3 + Raspberry Pi 5
-
-Workspace de ROS 2 para un robot terrestre de **tracción trasera y dirección delantera tipo bicicleta (bicycle/Ackermann model)**, construido sobre un **brick LEGO Mindstorms EV3** (motores) controlado desde una **Raspberry Pi 5** (cerebro ROS 2), con **LiDAR RPLiDAR C1**, **cámara Logitech (USB)** y navegación autónoma completa con **SLAM Toolbox** y **Nav2**.
-
-El EV3 corre un `server.py` (ev3dev / MicroPython‑EV3) que expone un **socket TCP** por el que la Raspberry Pi envía consignas de velocidad/dirección y recibe encoders en tiempo real. Del lado de ROS 2, un **hardware component de `ros2_control`** (`mi_ackermann_hardware`) es quien habla ese protocolo, de modo que para el resto del stack (controladores, TF2, SLAM, Nav2) el robot se ve como cualquier otro `system` de `ros2_control`.
-
-> Este documento es la memoria técnica completa del proyecto: arquitectura, paquetes, configuración de TF2, odometría por láser (RF2O), SLAM, Nav2, y **todos los comandos** necesarios para levantar el robot, mapear y navegar.
-
----
+# Proyecto Final FRM — Robot LEGO EV3 + Raspberry Pi 5 con direccion tipo ackermann
 
 ## 📑 Tabla de contenidos
 
@@ -31,7 +23,7 @@ El EV3 corre un `server.py` (ev3dev / MicroPython‑EV3) que expone un **socket 
 
 ## 🧭 Visión general del sistema
 
-El robot es un **triciclo tipo bicicleta**: una rueda trasera de tracción (motor **Large** del EV3) y una rueda delantera de dirección (motor **Medium** del EV3, actuando como servo de ±0.4 rad). Visualmente el chasis tiene 4 ruedas (2 traseras + 2 delanteras) para estabilidad física, pero **cinemáticamente se modela como bicycle model** con dos "ruedas virtuales" (`virtual_rear_wheel` y `virtual_front_wheel`) en el centro de cada eje — las ruedas reales izquierda/derecha son solo *mimic joints* visuales que copian el movimiento de la rueda virtual.
+El prototipo es un robot movil con dirección tipo ackermann (carlike-bicicleta): una rueda trasera de tracción (motor grande del EV3) y una rueda delantera de dirección (motor pequeño del EV3 visualmente el chasis tiene 4 ruedas (2 traseras + 2 delanteras) para estabilidad física, pero **cinemáticamente se modela como bicycle model** con dos "ruedas virtuales" (`virtual_rear_wheel` y `virtual_front_wheel`) en el centro de cada eje — las ruedas reales izquierda/derecha son solo *mimic joints* visuales que copian el movimiento de la rueda virtual.
 
 ```
 ┌─────────────────────────────┐        WiFi / TCP:2100        ┌──────────────────────────────┐
