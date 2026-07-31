@@ -695,3 +695,23 @@ Estas notas están documentadas directamente en el código y en la bitácora del
 - **IP del EV3 hardcodeada:** si el EV3 cambia de IP (DHCP), hay que actualizar manualmente `mobile_base.ros2_control.xacro` en `mi_ackermann_description` y recompilar/reinstalar ese paquete.
 
 ---
+
+
+## Presentado por
+
+<table align="center">
+  <tr>
+    <td align="center">
+      <img src="imgs/FotoJavier.jpg" alt="Javier Danilo Tovar Rodriguez" width="180"><br>
+      <b>Javier Danilo Tovar Rodriguez</b>
+    </td>
+    <td align="center">
+      <img src="imgs/Fotoruiz.jpg" alt="David Felipe Ruiz Reyes" width="180"><br>
+      <b>David Felipe Ruiz Reyes</b>
+    </td>
+    <td align="center">
+      <img src="imgs/FotoDiego.jpg" alt="Diego Andres Fernandez Sosa" width="180"><br>
+      <b>Diego Andres Fernandez Sosa</b>
+    </td>
+  </tr>
+</table>
