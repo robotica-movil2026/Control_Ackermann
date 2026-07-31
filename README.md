@@ -706,7 +706,7 @@ Estas notas están documentadas directamente en el código y en la bitácora del
       <b>Javier Danilo Tovar Rodriguez</b>
     </td>
     <td align="center">
-      <img src="imgs/Fotoruiz.jpg" alt="David Felipe Ruiz Reyes" width="180"><br>
+      <img src="imgs/Fotoruizjpg.jpg" alt="David Felipe Ruiz Reyes" width="180"><br>
       <b>David Felipe Ruiz Reyes</b>
     </td>
     <td align="center">
